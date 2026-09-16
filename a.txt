@@ -1,12 +1,11 @@
+
+部署环境
+ubuntu24
+
+
+
 docker run -d -v /home/ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+docker exec -it 19068691b0e2 sh
 ollama pull qwen3-embedding:0.6b
 ollama pull deepseek-r1:7b
-
-
-
-docker exec -it 5419c1ecef5d /bin/bash
-
-
-
-
-docker compose -f docker-compose.yml -f docker-compose.debug.yml up -d --profile frontend --profile debug
+docker compose -f docker-compose.yml  --profile frontend --profile debug up
