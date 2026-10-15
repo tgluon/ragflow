@@ -9,8 +9,8 @@ admin:
 mysql:
   name: '${MYSQL_DBNAME:-rag_flow}'
   user: '${MYSQL_USER:-root}'
-  password: '${MYSQL_PASSWORD:-infini_rag_flow}'
-  host: '${MYSQL_HOST:-mysql}'
+  password: '${MYSQL_PASSWORD:-root}'
+  host: '${MYSQL_HOST:-apboa-mysql}'
   port: ${MYSQL_PORT:-3306}
   max_connections: 900
   stale_timeout: 300
@@ -73,7 +73,7 @@ seekdb:
 redis:
   db: 1
   username: '${REDIS_USERNAME:-}'
-  password: '${REDIS_PASSWORD:-infini_rag_flow}'
+  password: '${REDIS_PASSWORD:-redis}'
   host: '${REDIS_HOST:-redis}:6379'
 nats:
   host: ${NATS_HOST:-0.0.0.0}
@@ -101,7 +101,7 @@ user_default_llm:
   default_models:
     embedding_model:
       api_key: 'xxx'
-      base_url: 'http://${TEI_HOST}:80'
+      base_url: 'http://${TEI_HOST}:82'
 # postgres:
 #   name: '${POSTGRES_DBNAME:-rag_flow}'
 #   user: '${POSTGRES_USER:-rag_flow}'
