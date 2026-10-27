@@ -4,6 +4,10 @@ ubuntu24
 安装docker
 https://www.cnblogs.com/ag-chen/p/18677273
 
+腾讯云docker 加速
+https://cloud.tencent.com/document/product/1207/45596
+
+
 docker network create apboa
 
 mkdir /home/ollama
