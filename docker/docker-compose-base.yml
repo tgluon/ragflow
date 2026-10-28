@@ -34,7 +34,7 @@ services:
       timeout: 10s
       retries: 120
     networks:
-      - ragflow
+      - apboa
     restart: unless-stopped
 
 
@@ -71,7 +71,7 @@ services:
       timeout: 10s
       retries: 120
     networks:
-      - ragflow
+      - apboa
     restart: unless-stopped
 
 
@@ -86,7 +86,7 @@ services:
     ports:
       - ${INFINITY_THRIFT_PORT}:23817
       - ${INFINITY_HTTP_PORT}:23820
-      - ${INFINITY_PSQL_PORT}:5432
+      - ${INFINITY_PSQL_PORT}:5433
     env_file: .env
     mem_limit: ${MEM_LIMIT}
     ulimits:
@@ -94,7 +94,7 @@ services:
         soft: 500000
         hard: 500000
     networks:
-      - ragflow
+      - apboa
     healthcheck:
       test: ["CMD", "curl", "http://localhost:23820/admin/node/current"]
       interval: 10s
@@ -116,7 +116,7 @@ services:
       - serenedb_data:/var/lib/serenedb
     mem_limit: ${MEM_LIMIT}
     networks:
-      - ragflow
+      - apboa
     healthcheck:
       test: ["CMD", "pg_isready", "-h", "127.0.0.1", "-p", "7890", "-U", "postgres"]
       interval: 10s
@@ -153,7 +153,7 @@ services:
       start_period: 30s
       timeout: 10s
     networks:
-      - ragflow
+      - apboa
     restart: unless-stopped
 
 
@@ -180,7 +180,7 @@ services:
       retries: 60
       timeout: 5s
     networks:
-      - ragflow
+      - apboa
     restart: unless-stopped
 
 
@@ -199,14 +199,14 @@ services:
     # network. Remote access is an explicit opt-in through VB_BIND_ADDR
     # (e.g. 0.0.0.0 or a specific interface IP) in docker/.env.
     ports:
-      - ${VB_BIND_ADDR:-127.0.0.1}:${EXPOSE_VB_PORT:-5432}:5432
+      - ${VB_BIND_ADDR:-127.0.0.1}:${EXPOSE_VB_PORT:-5433}:5433
     volumes:
       - vastbase_data:/home/vastbase/data
       - ./vastbase/init:/docker-entrypoint-initdb.d
       - ./vastbase/license:/home/vastbase/vastbase/lic
     mem_limit: ${MEM_LIMIT}
     networks:
-      - ragflow
+      - apboa
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "vsql -c 'SELECT 1'"]
@@ -228,7 +228,7 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
     networks:
-      - ragflow
+      - apboa
     security_opt:
       - no-new-privileges:true
     environment:
@@ -307,7 +307,7 @@ services:
       - mysql_data:/var/lib/mysql
       - ./init.sql:/data/application/init.sql
     networks:
-      - ragflow
+      - apboa
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-uroot", "-p${MYSQL_PASSWORD}"]
       interval: 1s
@@ -330,7 +330,7 @@ services:
     volumes:
       - minio_data:/data
     networks:
-      - ragflow
+      - apboa
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
@@ -340,6 +340,8 @@ services:
 
 
   kvrocks:
+    profiles:
+      - kvrocks
     # Apache Kvrocks: a RocksDB-backed, Redis-protocol-compatible store used
     # ONLY by the Go services (ragflow-cpu / ragflow-gpu), which override
     # REDIS_HOST=kvrocks in docker-compose-go.yml. The Python services keep
@@ -366,12 +368,12 @@ services:
     # 6379, and the Go services reach `kvrocks:6379` inside the docker network
     # regardless of the host mapping (KVROCKS_PORT stays 6379, set by the Go overlay).
     ports:
-      - "${KVROCKS_PORT:-6379}:6379"
+      - "${KVROCKS_PORT:-6390}:6390"
     volumes:
       - kvrocks_data:/var/lib/kvrocks
       - ./kvrocks-entrypoint.sh:/etc/kvrocks/entrypoint.sh:ro
     networks:
-      - ragflow
+      - apboa
     restart: unless-stopped
     healthcheck:
       # The Kvrocks image ships redis-cli and requirepass is enforced, so ping
@@ -394,11 +396,13 @@ services:
     environment:
       - COLLECTOR_OTLP_ENABLED=true
     networks:
-      - ragflow
+      - apboa
     restart: unless-stopped
 
 
   nats:
+    profiles:
+      - nats
     image: nats:2.14.2
     ports:
       - ${EXPOSE_NATS_PORT:-4222}:4222
@@ -408,7 +412,7 @@ services:
     command: -js -sd /data --http_port 8222
     env_file: .env
     networks:
-      - ragflow
+      - apboa
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "nats-server", "--health-check"]
@@ -426,7 +430,7 @@ services:
       - ${TEI_PORT-6380}:80
     env_file: .env
     networks:
-      - ragflow
+      - apboa
     command: ["--model-id", "/data/${TEI_MODEL}", "--auto-truncate"]
     restart: unless-stopped
 
@@ -440,7 +444,7 @@ services:
       - ${TEI_PORT-6380}:80
     env_file: .env
     networks:
-      - ragflow
+      - apboa
     command: ["--model-id", "/data/${TEI_MODEL}", "--auto-truncate"]
     deploy:
       resources:
@@ -470,7 +474,7 @@ services:
       timeout: 10s
       retries: 120
     networks:
-      - ragflow
+      - apboa
     restart: unless-stopped
 
 
@@ -501,7 +505,7 @@ services:
       retries: 30
       start_period: 30s
     networks:
-      - ragflow
+      - apboa
     restart: unless-stopped
 
 
@@ -538,5 +542,6 @@ volumes:
     driver: local
 
 networks:
-  ragflow:
+  apboa:
+    name: apboa
     driver: bridge

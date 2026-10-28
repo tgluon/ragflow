@@ -1,0 +1,25 @@
+
+部署环境
+ubuntu24
+安装docker
+https://www.cnblogs.com/ag-chen/p/18677273
+
+腾讯云docker 加速
+https://cloud.tencent.com/document/product/1207/45596
+
+
+docker network create apboa
+
+mkdir /home/ollama
+docker run -d -v /home/ollama:/root/.ollama -p 11434:11434 --name ollama ollama/ollama
+docker exec -it 4c59e6d37a8e sh
+ollama pull qwen3-embedding:0.6b
+ollama pull deepseek-r1:7b
+
+docker compose -f a.yml up -d
+docker compose -f docker-compose.yml down -v
+docker compose -f docker/docker-compose.yml  --profile cpu --profile infinity --profile minio  --profile kvrocks --profile nats  up > compose-up.log 2>&1 &
+docker compose -f docker/docker-compose.yml  --profile cpu --profile infinity --profile minio  --profile kvrocks --profile nats   down -v
+docker save infiniflow/ragflow:nightly -o ragflow.24.tar
+
+cp -f "/ragflow/conf/ragflow.conf.hybrid" "/etc/nginx/conf.d/ragflow.conf"

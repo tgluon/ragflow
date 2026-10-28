@@ -4,7 +4,7 @@ time_zone                = "utc-8"
 
 [network]
 server_address           = "0.0.0.0"
-postgres_port            = 5432
+postgres_port            = 5433
 http_port                = 23820
 client_port              = 23817
 connection_pool_size     = 128
