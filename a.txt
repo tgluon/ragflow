@@ -18,7 +18,8 @@ ollama pull deepseek-r1:7b
 
 docker compose -f a.yml up -d
 docker compose -f docker-compose.yml down -v
-docker compose -f docker-compose.yml  --profile cpu --profile infinity --profile minio  up > compose-up.log 2>&1 &
+docker compose -f docker/docker-compose.yml  --profile cpu --profile infinity --profile minio  up > compose-up.log 2>&1 &
+docker compose -f docker/docker-compose.yml  --profile cpu --profile infinity --profile minio  down -v
 docker save infiniflow/ragflow:nightly -o ragflow.24.tar
 
 cp -f "/ragflow/conf/ragflow.conf.hybrid" "/etc/nginx/conf.d/ragflow.conf"
